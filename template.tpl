@@ -13,8 +13,10 @@ ___INFO___
   "id": "cvt_temp_public_id",
   "version": 1,
   "securityGroups": [],
-  "__wm": "VGVtcGxhdGUtQXV0aG9yX1ByZWZsaWdodC1SZXF1ZXN0LVNpbW8tQWhhdmE=",
-  "categories": ["UTILITY"],
+  "__wm": "VGVtcGxhdGUtQXV0aG9yX1ByZWZsaWdodC1SZXF1ZXN0LVNpbW8tQWhhdmE\u003d",
+  "categories": [
+    "UTILITY"
+  ],
   "displayName": "Preflight Request",
   "brand": {
     "id": "brand_dummy",
@@ -33,16 +35,22 @@ ___TEMPLATE_PARAMETERS___
 [
   {
     "type": "TEXT",
-    "name": "approvedOrigins",
-    "displayName": "Allowed request origins",
+    "name": "approvedOrigin",
+    "displayName": "Allowed request origin",
     "simpleValueType": true,
     "valueValidators": [
       {
         "type": "NON_EMPTY"
+      },
+      {
+        "type": "REGEX",
+        "args": [
+          "^(http(s)?://[^/]+|auto)$"
+        ]
       }
     ],
-    "help": "Enter a comma-separated list of request origins to approve the preflight request for, or set to * to approve all origins.",
-    "defaultValue": "https://myorigin.com,https://myotherorigin.com",
+    "help": "Enter the origin from where you want to approve requests.Set the value to \u003cstrong\u003eauto\u003c/strong\u003e in case you want to (attempt to) approve the request from any origin.",
+    "defaultValue": "https://www.my.origin",
     "alwaysInSummary": true
   },
   {
@@ -98,13 +106,11 @@ if (getRequestMethod() !== 'OPTIONS') return;
 claimRequest();
 
 // If origins is wildcarded, set the header to the request's origin
-if (data.approvedOrigins === '*') {
+if (data.approvedOrigin === 'auto') {
   setResponseHeader('Access-Control-Allow-Origin', getRequestHeader('origin'));
 } else {
 // Otherwise add an access header for each listed origin
-  data.approvedOrigins.split(',').forEach(origin => {
-    setResponseHeader('Access-Control-Allow-Origin', origin);
-  });
+  setResponseHeader('Access-Control-Allow-Origin', data.approvedOrigin);
 }
 
 setResponseHeader('Access-Control-Allow-Methods', data.approvedMethods);
