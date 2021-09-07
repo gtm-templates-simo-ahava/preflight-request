@@ -360,7 +360,7 @@ scenarios:
       if (h === 'origin') return 'https://www.otherdomain.com';
     });
 
-    mockData.approvedOrigin = '*';
+    mockData.approvedOrigin = 'auto';
 
     // Call runCode to run the template's code.
     runCode(mockData);
