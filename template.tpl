@@ -366,14 +366,6 @@ scenarios:
     runCode(mockData);
 
     assertApi('setResponseHeader').wasCalledWith('Access-Control-Allow-Origin', 'https://www.otherdomain.com');
-- name: Return successful response with multiple origins
-  code: |-
-    mockData.approvedOrigin = 'https://www.firstdomain.com,https://www.seconddomain.com';
-
-    runCode(mockData);
-
-    assertApi('setResponseHeader').wasCalledWith('Access-Control-Allow-Origin', 'https://www.firstdomain.com');
-    assertApi('setResponseHeader').wasCalledWith('Access-Control-Allow-Origin', 'https://www.seconddomain.com');
 setup: |-
   const mockData = {
     approvedOrigin: 'https://www.domain.com',
