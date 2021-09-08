@@ -360,23 +360,15 @@ scenarios:
       if (h === 'origin') return 'https://www.otherdomain.com';
     });
 
-    mockData.approvedOrigins = '*';
+    mockData.approvedOrigin = 'auto';
 
     // Call runCode to run the template's code.
     runCode(mockData);
 
     assertApi('setResponseHeader').wasCalledWith('Access-Control-Allow-Origin', 'https://www.otherdomain.com');
-- name: Return successful response with multiple origins
-  code: |-
-    mockData.approvedOrigins = 'https://www.firstdomain.com,https://www.seconddomain.com';
-
-    runCode(mockData);
-
-    assertApi('setResponseHeader').wasCalledWith('Access-Control-Allow-Origin', 'https://www.firstdomain.com');
-    assertApi('setResponseHeader').wasCalledWith('Access-Control-Allow-Origin', 'https://www.seconddomain.com');
 setup: |-
   const mockData = {
-    approvedOrigins: 'https://www.domain.com',
+    approvedOrigin: 'https://www.domain.com',
     approvedMethods: 'GET,POST',
     approvedHeaders: 'content-type'
   };
