@@ -1,8 +1,10 @@
 homepage: "https://www.simoahava.com/"
 versions:
   # Latest version
+  - sha: 6e7b01b573eb4482abd11eaefd04ae4106f768d4
+    changeNotes: Fix tests
+  # Older versions
   - sha: a714ef7fce7b603679720ccb99dcb5faf4ea9075
     changeNotes: Fix to only allow a single Access-Control-Allow-Origin header
-  # Older versions
   - sha: df821a0c40e57aa7fbed304bcbf3847a7c416603
     changeNotes: Initial release.
