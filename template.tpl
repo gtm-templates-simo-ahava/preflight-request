@@ -100,29 +100,33 @@ const returnResponse = require('returnResponse');
 const setResponseHeader = require('setResponseHeader');
 const setResponseStatus = require('setResponseStatus');
 
-// If not a preflight request, return
-if (getRequestMethod() !== 'OPTIONS') return;
-
-claimRequest();
-
-// If origins is wildcarded, set the header to the request's origin
-if (data.approvedOrigin === 'auto') {
-  setResponseHeader('Access-Control-Allow-Origin', getRequestHeader('origin'));
-} else {
-// Otherwise add an access header for each listed origin
-  setResponseHeader('Access-Control-Allow-Origin', data.approvedOrigin);
+// Function to set CORS headers
+function setCORSHeaders() {
+  // Check if the Origin header is present and the approved origin is set to 'auto' or matches the Origin header
+  const requestOrigin = getRequestHeader('Origin');
+  const approvedOrigin = data.approvedOrigin === 'auto' ? requestOrigin : data.approvedOrigin;
+  
+  if (requestOrigin && (data.approvedOrigin === 'auto' || data.approvedOrigin === requestOrigin)) {
+    setResponseHeader('Access-Control-Allow-Origin', approvedOrigin);
+    setResponseHeader('Access-Control-Allow-Methods', data.approvedMethods);
+    setResponseHeader('Access-Control-Allow-Headers', data.approvedHeaders);
+    setResponseHeader('Access-Control-Allow-Credentials', 'true');
+  }
 }
 
-setResponseHeader('Access-Control-Allow-Methods', data.approvedMethods);
+// Get the request method
+const method = getRequestMethod();
 
-setResponseHeader('Access-Control-Allow-Headers', data.approvedHeaders);
-
-// The XHR needs .withCredentials set to true for the request to show up in Debug mode
-setResponseHeader('Access-Control-Allow-Credentials', 'true');
-
-setResponseStatus(200);
-
-returnResponse();
+// Check if the request is preflight
+if (method === 'OPTIONS') {
+  claimRequest();
+  setCORSHeaders();
+  setResponseStatus(200);
+  returnResponse();
+} else if (method === 'POST') {
+  // For POST requests, set CORS headers but do not claim the request
+  setCORSHeaders();
+}
 
 
 ___SERVER_PERMISSIONS___
